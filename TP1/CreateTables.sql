@@ -105,6 +105,7 @@ CREATE TABLE Plan (
 CREATE TABLE PlanXMateria (
   id_plan INT,
   id_materia INT,
+  -- PRIMARY KEY (id_plan, id_materia),
   FOREIGN KEY (id_plan) REFERENCES Plan(id_plan),
   FOREIGN KEY (id_materia) REFERENCES Materia(id_materia)
 );
