@@ -1,144 +1,111 @@
--- The aim of this TP is to create all the necessary tables to complete the TP1 DER.
+CREATE DATABASE acad;
 
--- CREATE TABLE (
---   column1 datatype constraint,
---   column2 datatype constraint,
---   PRIMARY KEY (columnName)
--- )
+USE acad;
 
-
-
--- Constraints
-
--- NOT NULL -> A Column can not have an empty value.
--- UNIQUE -> Ensures that every value in a column is unique.
--- PRIMARY KEY (column) -> Combination of the two above. Only one per table.
--- FOREIGN KEY (column) REFERENCES table(table_column) -> Links between tables.
--- CHECK -> Ensures that values in a column satisfies a specific condition.
--- DEFAULT -> Sets a default value for a column if no value is specified.
--- CREATE INDEX -> Imrpvoes performance.
-
-
-
--- Tables
-
--- DROP TABLE -> deletes a table
--- TRUNCATE TABLE -> deletes data inside a table
--- CREATE TABLE -> creates a new table
--- CREATE VIEW -> creates a virtual table with the result of a query so that we prevent unauthorized access to data.
--- DROP VIEW
-
-
-
--- Data Types
-
--- CHAR(size) -> Fixed size string.
--- VARCHAR(size) -> Variable size string with max size of `size`.
--- BINARY(size) -> Fixed length binary byte strings.
--- VARBINARY(size) -> Variable binary byte strings.
--- TINYTEXT
--- TEXT(size)
--- BLOB(size)
--- ENUM(val1, val2, ...)
--- SET(val1, val2, ...)
-
--- BOOL
--- INT(size)
--- DECIMAL(size, decimals)
-
--- DATE -> YYYY-MM-DD
--- DATETIME(fsp) -> YYYY-MM-DD hh:mm:ss -> fsp: "fractional seconds precision"
--- TIMESTAMP(fsp)
--- TIME(fsp)
--- YEAR
-
-
-
--- Alumno
-CREATE TABLE Alumno (
-  nombre VARCHAR(255) NOT NULL,
-  apellido VARCHAR(255) NOT NULL,
-  fecha_nacimiento DATE NOT NULL,
-  dni INT NOT NULL UNIQUE,
-  clave INT NOT NULL UNIQUE,
-  id_alumno INT,
-  PRIMARY KEY (id_alumno)
+-- Tabla alumno
+CREATE TABLE alumno (
+    id_alumno INT PRIMARY KEY,
+    nombre VARCHAR(100),
+    apellido VARCHAR(100),
+    fecha_nacimiento DATE
 );
 
--- Materia
-CREATE TABLE Materia (
-  nombre VARCHAR(255) NOT NULL,
-  id_materia INT,
-  PRIMARY KEY (id_materia)
+-- Tabla carrera
+CREATE TABLE carrera (
+    id_carrera INT PRIMARY KEY,
+    nombre_carrera VARCHAR(100),
+    titulo VARCHAR(100)
 );
 
--- Carrera
-CREATE TABLE Carrera (
-  nombre VARCHAR(255) NOT NULL,
-  titulo VARCHAR(255) NOT NULL,
-  id_carrera INT,
-  id_plan INT,
-  PRIMARY KEY (id_carrera),
-  FOREIGN KEY (id_plan) REFERENCES Plan(id_plan)
+-- Tabla inscripcion_carrera
+CREATE TABLE inscripcion_carrera (
+    id_insc_carrera INT PRIMARY KEY,
+    fecha_matriculacion DATE,
+    id_alumno INT,
+    id_carrera INT,
+    FOREIGN KEY (id_alumno) REFERENCES alumno(id_alumno),
+    FOREIGN KEY (id_carrera) REFERENCES carrera(id_carrera)
 );
 
--- Matriculación
-CREATE TABLE Matriculacion (
-  fecha_matriculacion DATE NOT NULL,
-  id_matriculacion INT,
-  id_carrera INT,
-  id_alumno INT,
-  PRIMARY KEY (id_matriculacion),
-  FOREIGN KEY (id_carrera) REFERENCES Carrera(id_carrera),
-  FOREIGN KEY (id_alumno) REFERENCES Alumno(id_alumno)
+-- Tabla materia
+CREATE TABLE materia (
+    id_materia INT PRIMARY KEY,
+    nombre_materia VARCHAR(100)
 );
 
--- Plan
-CREATE TABLE Plan (
-  ano_cursado INT NOT NULL,
-  cuatrimestre INT NOT NULL,
-  id_plan INT,
-  PRIMARY KEY (id_plan),
+-- Tabla plan_de_materia
+CREATE TABLE plan_de_materia (
+    id_plan INT PRIMARY KEY,
+    cuatrimestre INT,
+    anio_cursada INT,
+    id_carrera INT,
+    FOREIGN KEY (id_carrera) REFERENCES carrera(id_carrera)
 );
 
--- PlanXMateria
-CREATE TABLE PlanXMateria (
-  id_plan INT,
-  id_materia INT,
-  -- PRIMARY KEY (id_plan, id_materia),
-  FOREIGN KEY (id_plan) REFERENCES Plan(id_plan),
-  FOREIGN KEY (id_materia) REFERENCES Materia(id_materia)
+-- Tabla materiaXplan
+CREATE TABLE materiaXplan (
+    id_materiaXplan INT PRIMARY KEY,
+    id_plan INT,
+    id_materia INT,
+    FOREIGN KEY (id_plan) REFERENCES plan_de_materia(id_plan),
+    FOREIGN KEY (id_materia) REFERENCES materia(id_materia)
 );
 
--- Parcial
-CREATE TABLE Parcial (
-  fecha_parcial DATE NOT NULL,
-  nota INT NOT NULL,
-  id_parcial INT,
-  id_materia INT,
-  id_alumno INT,
-  PRIMARY KEY (id_parcial),
-  FOREIGN KEY (id_materia) REFERENCES Materia(id_materia),
-  FOREIGN KEY (id_alumno) REFERENCES Alumno(id_alumno)
+-- Tabla comision
+CREATE TABLE comision (
+    id_comision INT PRIMARY KEY,
+    nombre_comision VARCHAR(100)
 );
 
--- TurnoExamen
-CREATE TABLE TurnoExamen (
-  fecha_examen DATE NOT NULL,
-  id_turno INT,
-  id_materia INT,
-  PRIMARY KEY (id_turno),
-  FOREIGN KEY (id_materia) REFERENCES Materia(id_materia)
+-- Tabla materiaXplanXcomision
+CREATE TABLE materiaXplanXcomision (
+    id_materiaXplanXcomision INT PRIMARY KEY,
+    id_materiaXplan INT,
+    id_comision INT,
+    FOREIGN KEY (id_materiaXplan) REFERENCES materiaXplan(id_materiaXplan),
+    FOREIGN KEY (id_comision) REFERENCES comision(id_comision)
 );
 
--- InscripcionExamen
-CREATE TABLE InscripcionExamen (
-  fecha_inscripcion DATE NOT NULL,
-  nota INT NOT NULL,
-  id_inscripcion INT,
-  id_alumno INT,
-  id_turno INT,
-  PRIMARY KEY (id_inscripcion),
-  FOREIGN KEY (id_alumno) REFERENCES Alumno(id_alumno),
-  FOREIGN KEY (id_turno) REFERENCES TurnoExamen(id_turno)
+-- Tabla profesor
+CREATE TABLE profesor (
+    id_profesor INT PRIMARY KEY,
+    nombre VARCHAR(100),
+    apellido VARCHAR(100),
+    fecha_nacimiento DATE
+);
+
+-- Tabla inscripcion_materia
+CREATE TABLE inscripcion_materia (
+    id_insc_materia INT PRIMARY KEY,
+    fecha_inscripcion DATE,
+    estado VARCHAR(50),
+    fecha_estado DATE,
+    id_alumno INT,
+    id_materiaXplanXcomision INT,
+    FOREIGN KEY (id_alumno) REFERENCES alumno(id_alumno),
+    FOREIGN KEY (id_materiaXplanXcomision) REFERENCES materiaXplanXcomision(id_materiaXplanXcomision)
+);
+
+-- Tabla parcial
+CREATE TABLE parcial (
+    id_parcial INT PRIMARY KEY,
+    parcial VARCHAR(50),
+    fecha DATE,
+    nota DECIMAL(5, 2)
+);
+
+-- Tabla inscripcion_examen
+CREATE TABLE inscripcion_examen (
+    id_inscripcion_examen INT PRIMARY KEY,
+    fecha_inscripcion DATE,
+    fecha_examen DATE,
+    nota DECIMAL(5, 2),
+    id_parcial INT,
+    FOREIGN KEY (id_parcial) REFERENCES parcial(id_parcial)
+);
+
+-- Tabla turno_examen
+CREATE TABLE turno_examen (
+    id_turno_examen INT PRIMARY KEY,
+    fecha_turno DATE
 );
