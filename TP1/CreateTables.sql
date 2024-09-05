@@ -2,7 +2,6 @@ CREATE DATABASE acad;
 
 USE acad;
 
--- Tabla alumno
 CREATE TABLE alumno (
     id_alumno INT PRIMARY KEY,
     nombre VARCHAR(100),
@@ -10,14 +9,12 @@ CREATE TABLE alumno (
     fecha_nacimiento DATE
 );
 
--- Tabla carrera
 CREATE TABLE carrera (
     id_carrera INT PRIMARY KEY,
     nombre_carrera VARCHAR(100),
     titulo VARCHAR(100)
 );
 
--- Tabla inscripcion_carrera
 CREATE TABLE inscripcion_carrera (
     id_insc_carrera INT PRIMARY KEY,
     fecha_matriculacion DATE,
@@ -27,13 +24,11 @@ CREATE TABLE inscripcion_carrera (
     FOREIGN KEY (id_carrera) REFERENCES carrera(id_carrera)
 );
 
--- Tabla materia
 CREATE TABLE materia (
     id_materia INT PRIMARY KEY,
     nombre_materia VARCHAR(100)
 );
 
--- Tabla plan_de_materia
 CREATE TABLE plan_de_materia (
     id_plan INT PRIMARY KEY,
     cuatrimestre INT,
@@ -42,7 +37,6 @@ CREATE TABLE plan_de_materia (
     FOREIGN KEY (id_carrera) REFERENCES carrera(id_carrera)
 );
 
--- Tabla materiaXplan
 CREATE TABLE materiaXplan (
     id_materiaXplan INT PRIMARY KEY,
     id_plan INT,
@@ -51,13 +45,11 @@ CREATE TABLE materiaXplan (
     FOREIGN KEY (id_materia) REFERENCES materia(id_materia)
 );
 
--- Tabla comision
 CREATE TABLE comision (
     id_comision INT PRIMARY KEY,
     nombre_comision VARCHAR(100)
 );
 
--- Tabla materiaXplanXcomision
 CREATE TABLE materiaXplanXcomision (
     id_materiaXplanXcomision INT PRIMARY KEY,
     id_materiaXplan INT,
@@ -66,7 +58,6 @@ CREATE TABLE materiaXplanXcomision (
     FOREIGN KEY (id_comision) REFERENCES comision(id_comision)
 );
 
--- Tabla profesor
 CREATE TABLE profesor (
     id_profesor INT PRIMARY KEY,
     nombre VARCHAR(100),
@@ -74,7 +65,6 @@ CREATE TABLE profesor (
     fecha_nacimiento DATE
 );
 
--- Tabla inscripcion_materia
 CREATE TABLE inscripcion_materia (
     id_insc_materia INT PRIMARY KEY,
     fecha_inscripcion DATE,
@@ -86,7 +76,6 @@ CREATE TABLE inscripcion_materia (
     FOREIGN KEY (id_materiaXplanXcomision) REFERENCES materiaXplanXcomision(id_materiaXplanXcomision)
 );
 
--- Tabla parcial
 CREATE TABLE parcial (
     id_parcial INT PRIMARY KEY,
     parcial VARCHAR(50),
@@ -94,7 +83,6 @@ CREATE TABLE parcial (
     nota DECIMAL(5, 2)
 );
 
--- Tabla inscripcion_examen
 CREATE TABLE inscripcion_examen (
     id_inscripcion_examen INT PRIMARY KEY,
     fecha_inscripcion DATE,
@@ -104,7 +92,6 @@ CREATE TABLE inscripcion_examen (
     FOREIGN KEY (id_parcial) REFERENCES parcial(id_parcial)
 );
 
--- Tabla turno_examen
 CREATE TABLE turno_examen (
     id_turno_examen INT PRIMARY KEY,
     fecha_turno DATE
