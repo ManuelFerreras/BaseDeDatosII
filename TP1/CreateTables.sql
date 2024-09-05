@@ -82,7 +82,9 @@ CREATE TABLE parcial (
     id_parcial INT PRIMARY KEY,
     parcial VARCHAR(50),
     fecha DATE,
-    nota DECIMAL(5, 2)
+    nota DECIMAL(5, 2),
+    id_inscripcion INT,
+    FOREIGN KEY (id_inscripcion) REFERENCES inscripcion_materia(id_insc_materia)
 );
 
 CREATE TABLE inscripcion_examen (
@@ -90,8 +92,6 @@ CREATE TABLE inscripcion_examen (
     fecha_inscripcion DATE,
     fecha_examen DATE,
     nota DECIMAL(5, 2),
-    id_parcial INT,
-    FOREIGN KEY (id_parcial) REFERENCES parcial(id_parcial)
 );
 
 CREATE TABLE turno_examen (
