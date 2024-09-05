@@ -1,3 +1,5 @@
+DROP DATABASE IF EXISTS acad;
+
 CREATE DATABASE acad;
 
 USE acad;

@@ -37,9 +37,9 @@ VALUES
 
 INSERT INTO alumno (id_alumno, nombre, apellido, fecha_nacimiento)
 VALUES 
-(1, 'Juan', 'Pérez', '1995-08-15'),
-(2, 'María', 'Gómez', '1996-10-22'),
-(3, 'Luis', 'Martínez', '1997-05-30'),
+(1, 'Manuel', 'Ferreras', '1995-08-15'),
+(2, 'Matias', 'Carbel', '1996-10-22'),
+(3, 'Juan', 'Martínez', '1997-05-30'),
 (4, 'Ana', 'Rodríguez', '1995-09-01');
 
 INSERT INTO inscripcion_carrera (id_insc_carrera, fecha_matriculacion, id_alumno, id_carrera)
