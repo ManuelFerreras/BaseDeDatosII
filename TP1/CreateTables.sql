@@ -91,7 +91,7 @@ CREATE TABLE inscripcion_examen (
     id_inscripcion_examen INT PRIMARY KEY,
     fecha_inscripcion DATE,
     fecha_examen DATE,
-    nota DECIMAL(5, 2),
+    nota DECIMAL(5, 2)
 );
 
 CREATE TABLE turno_examen (
