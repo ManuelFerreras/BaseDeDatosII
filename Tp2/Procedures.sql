@@ -1,3 +1,4 @@
+-- Eliminar procedimientos existentes
 DROP PROCEDURE IF EXISTS verificar_existencia_carrera;
 DROP PROCEDURE IF EXISTS verificar_existencia_plan;
 DROP PROCEDURE IF EXISTS verificar_existencia_plan_para_materia;
@@ -31,8 +32,8 @@ BEGIN
     FROM plan_de_materia
     WHERE id_plan = p_id_plan;
 
-    IF plan_existe > 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El plan ya ha sido cargado previamente';
+    IF plan_existe = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El plan no existe';
     END IF;
 END //
 
@@ -62,117 +63,110 @@ BEGIN
     END IF;
 END //
 
--- Matricular alumno en un plan
-CREATE PROCEDURE matricular_alumno(IN p_id_alumno INT, IN p_id_plan INT)
+-- Matricular alumno en una carrera
+CREATE PROCEDURE matricular_alumno(IN p_id_alumno INT, IN p_id_carrera INT)
 BEGIN
     DECLARE matriculado INT;
-    
-    CALL verificar_existencia_alumno(p_id_alumno);
-    CALL verificar_existencia_plan_para_materia(p_id_plan);
 
+    -- Verificar la existencia del alumno y de la carrera
+    CALL verificar_existencia_alumno(p_id_alumno);
+    CALL verificar_existencia_carrera(p_id_carrera);
+
+    -- Verificar si el alumno ya está matriculado en la carrera
     SELECT COUNT(*) INTO matriculado
     FROM inscripcion_carrera
-    WHERE id_alumno = p_id_alumno AND id_plan = p_id_plan;
+    WHERE id_alumno = p_id_alumno AND id_carrera = p_id_carrera;
 
     IF matriculado > 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El alumno ya está matriculado en este plan';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El alumno ya está matriculado en esta carrera';
     ELSE
-        INSERT INTO inscripcion_carrera (id_alumno, id_plan, fecha_matriculacion)
-        VALUES (p_id_alumno, p_id_plan, CURDATE());
+        INSERT INTO inscripcion_carrera (id_alumno, id_carrera, fecha_matriculacion)
+        VALUES (p_id_alumno, p_id_carrera, CURDATE());
     END IF;
 END //
 
--- Inscripción en una materia
-CREATE PROCEDURE inscribir_materia(IN p_id_alumno INT, IN p_id_materia INT)
+-- Inscribir alumno en una materia
+CREATE PROCEDURE inscribir_materia(IN p_id_alumno INT, IN p_id_materiaXplanXcomision INT)
 BEGIN
     DECLARE inscripcion_existe INT;
-    
-    CALL verificar_existencia_alumno(p_id_alumno);
-    CALL verificar_existencia_materia(p_id_materia);
 
+    -- Verificar la existencia del alumno y de la materia en el plan y comisión
+    CALL verificar_existencia_alumno(p_id_alumno);
+    CALL verificar_existencia_materiaXplanXcomision(p_id_materiaXplanXcomision);
+
+    -- Verificar si el alumno ya está inscrito en la materia
     SELECT COUNT(*) INTO inscripcion_existe
     FROM inscripcion_materia
-    WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia
-      AND (estado = 'Regular' OR estado = 'Cursando');
+    WHERE id_alumno = p_id_alumno AND id_materiaXplanXcomision = p_id_materiaXplanXcomision;
 
     IF inscripcion_existe > 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El alumno ya está inscrito en esta materia';
     ELSE
-        INSERT INTO inscripcion_materia (id_alumno, id_materia, fecha_inscripcion, estado)
-        VALUES (p_id_alumno, p_id_materia, CURDATE(), 'Cursando');
+        INSERT INTO inscripcion_materia (id_alumno, id_materiaXplanXcomision, fecha_inscripcion, estado, fecha_estado)
+        VALUES (p_id_alumno, p_id_materiaXplanXcomision, CURDATE(), 'Cursando', CURDATE());
     END IF;
 END //
 
 -- Registrar parcial
-CREATE PROCEDURE registrar_parcial(IN p_id_alumno INT, IN p_id_materia INT, IN p_nota DECIMAL(5,2))
+CREATE PROCEDURE registrar_parcial(IN p_id_alumno INT, IN p_id_materiaXplanXcomision INT, IN p_parcial VARCHAR(50), IN p_nota DECIMAL(5,2))
 BEGIN
     DECLARE estado_materia VARCHAR(50);
-    DECLARE parciales_aprobados INT;
-    DECLARE parciales_reprobados INT;
-    
+
+    -- Verificar si el alumno está cursando la materia
     SELECT estado INTO estado_materia
     FROM inscripcion_materia
-    WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia;
+    WHERE id_alumno = p_id_alumno AND id_materiaXplanXcomision = p_id_materiaXplanXcomision;
 
     IF estado_materia != 'Cursando' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede registrar el parcial, el alumno no está cursando';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El alumno no está cursando esta materia';
     ELSE
-        INSERT INTO parcial (id_materia, id_alumno, fecha, nota)
-        VALUES (p_id_materia, p_id_alumno, CURDATE(), p_nota);
-
-        SELECT COUNT(*) INTO parciales_aprobados
-        FROM parcial
-        WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia AND nota >= 6;
-
-        IF parciales_aprobados >= 2 THEN
-            UPDATE inscripcion_materia SET estado = 'Regular'
-            WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia;
-        ELSE
-            SELECT COUNT(*) INTO parciales_reprobados
-            FROM parcial
-            WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia AND nota < 6;
-
-            IF parciales_reprobados >= 2 THEN
-                UPDATE inscripcion_materia SET estado = 'Libre'
-                WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia;
-            END IF;
-        END IF;
+        -- Insertar el parcial
+        INSERT INTO parcial (parcial, fecha, nota, id_inscripcion)
+        VALUES (p_parcial, CURDATE(), p_nota, 
+                (SELECT id_insc_materia FROM inscripcion_materia 
+                 WHERE id_alumno = p_id_alumno AND id_materiaXplanXcomision = p_id_materiaXplanXcomision));
     END IF;
 END //
 
 -- Inscripción en examen
-CREATE PROCEDURE inscribir_examen(IN p_id_alumno INT, IN p_id_materia INT)
+CREATE PROCEDURE inscribir_examen(IN p_id_alumno INT, IN p_id_materiaXplanXcomision INT)
 BEGIN
     DECLARE estado_materia VARCHAR(50);
 
+    -- Verificar si el alumno está regular en la materia
     SELECT estado INTO estado_materia
     FROM inscripcion_materia
-    WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia;
+    WHERE id_alumno = p_id_alumno AND id_materiaXplanXcomision = p_id_materiaXplanXcomision;
 
     IF estado_materia != 'Regular' THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El alumno no está regular en la materia, no puede inscribirse al examen';
     ELSE
-        INSERT INTO inscripcion_examen (id_alumno, id_materia, fecha_inscripcion)
-        VALUES (p_id_alumno, p_id_materia, CURDATE());
+        INSERT INTO inscripcion_examen (id_inscripcion_examen, fecha_inscripcion, fecha_examen, nota)
+        VALUES (NULL, CURDATE(), CURDATE(), NULL);
     END IF;
 END //
 
 -- Registrar nota de examen final
-CREATE PROCEDURE registrar_nota_examen(IN p_id_alumno INT, IN p_id_materia INT, IN p_nota DECIMAL(5,2))
+CREATE PROCEDURE registrar_nota_examen(IN p_id_alumno INT, IN p_id_materiaXplanXcomision INT, IN p_nota DECIMAL(5,2))
 BEGIN
     DECLARE inscripcion_existe INT;
-    
+
+    -- Verificar si el alumno está inscrito en el examen
     SELECT COUNT(*) INTO inscripcion_existe
-    FROM inscripcion_examen
-    WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia;
+    FROM inscripcion_examen ie
+    JOIN inscripcion_materia im ON im.id_insc_materia = ie.id_inscripcion_examen
+    WHERE im.id_alumno = p_id_alumno AND im.id_materiaXplanXcomision = p_id_materiaXplanXcomision;
 
     IF inscripcion_existe = 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existe inscripción al examen para este alumno';
     ELSE
         UPDATE inscripcion_examen
         SET nota = p_nota
-        WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia;
+        WHERE id_inscripcion_examen = (SELECT id_inscripcion_examen FROM inscripcion_examen ie
+                                       JOIN inscripcion_materia im ON ie.id_inscripcion_examen = im.id_insc_materia
+                                       WHERE im.id_alumno = p_id_alumno AND im.id_materiaXplanXcomision = p_id_materiaXplanXcomision);
 
+        -- Verificar si la nota es válida
         IF p_nota < 0 OR p_nota > 10 THEN
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La nota debe estar entre 0 y 10';
         END IF;
