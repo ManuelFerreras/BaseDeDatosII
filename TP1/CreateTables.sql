@@ -43,7 +43,7 @@ CREATE TABLE materiaXplan (
     id_materiaXplan INT PRIMARY KEY,
     id_plan INT,
     id_materia INT,
-    FOREIGN KEY (id_plan) REFERENCES plan_de_materia(id_plan),
+    FOREIGN KEY (id_plan) REFERENCES plan_de_carrera(id_plan),
     FOREIGN KEY (id_materia) REFERENCES materia(id_materia)
 );
 
