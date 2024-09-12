@@ -1,5 +1,12 @@
--- Clear all procedures before start.
-DELETE FROM mysql.proc WHERE db = 'acad';
+DROP PROCEDURE IF EXISTS verificar_existencia_carrera;
+DROP PROCEDURE IF EXISTS verificar_existencia_plan;
+DROP PROCEDURE IF EXISTS verificar_existencia_plan_para_materia;
+DROP PROCEDURE IF EXISTS verificar_existencia_materia;
+DROP PROCEDURE IF EXISTS matricular_alumno;
+DROP PROCEDURE IF EXISTS inscribir_materia;
+DROP PROCEDURE IF EXISTS registrar_parcial;
+DROP PROCEDURE IF EXISTS inscribir_examen;
+DROP PROCEDURE IF EXISTS registrar_nota_examen;
 
 DELIMITER //
 
