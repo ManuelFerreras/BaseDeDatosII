@@ -1,3 +1,6 @@
+-- Clear all procedures before start.
+DELETE FROM mysql.proc WHERE db = 'acad';
+
 DELIMITER //
 
 -- Verificar la existencia de una carrera
