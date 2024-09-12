@@ -1,4 +1,3 @@
--- Procedimientos almacenados
 DELIMITER //
 
 -- Verificar la existencia de una carrera
@@ -56,10 +55,11 @@ END //
 -- Matricular alumno en un plan
 CREATE PROCEDURE matricular_alumno(IN p_id_alumno INT, IN p_id_plan INT)
 BEGIN
+    DECLARE matriculado INT;
+    
     CALL verificar_existencia_alumno(p_id_alumno);
     CALL verificar_existencia_plan_para_materia(p_id_plan);
 
-    DECLARE matriculado INT;
     SELECT COUNT(*) INTO matriculado
     FROM inscripcion_carrera
     WHERE id_alumno = p_id_alumno AND id_plan = p_id_plan;
@@ -75,10 +75,11 @@ END //
 -- Inscripción en una materia
 CREATE PROCEDURE inscribir_materia(IN p_id_alumno INT, IN p_id_materia INT)
 BEGIN
+    DECLARE inscripcion_existe INT;
+    
     CALL verificar_existencia_alumno(p_id_alumno);
     CALL verificar_existencia_materia(p_id_materia);
 
-    DECLARE inscripcion_existe INT;
     SELECT COUNT(*) INTO inscripcion_existe
     FROM inscripcion_materia
     WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia
@@ -96,6 +97,9 @@ END //
 CREATE PROCEDURE registrar_parcial(IN p_id_alumno INT, IN p_id_materia INT, IN p_nota DECIMAL(5,2))
 BEGIN
     DECLARE estado_materia VARCHAR(50);
+    DECLARE parciales_aprobados INT;
+    DECLARE parciales_reprobados INT;
+    
     SELECT estado INTO estado_materia
     FROM inscripcion_materia
     WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia;
@@ -106,7 +110,6 @@ BEGIN
         INSERT INTO parcial (id_materia, id_alumno, fecha, nota)
         VALUES (p_id_materia, p_id_alumno, CURDATE(), p_nota);
 
-        DECLARE parciales_aprobados INT;
         SELECT COUNT(*) INTO parciales_aprobados
         FROM parcial
         WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia AND nota >= 6;
@@ -115,7 +118,6 @@ BEGIN
             UPDATE inscripcion_materia SET estado = 'Regular'
             WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia;
         ELSE
-            DECLARE parciales_reprobados INT;
             SELECT COUNT(*) INTO parciales_reprobados
             FROM parcial
             WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia AND nota < 6;
@@ -132,6 +134,7 @@ END //
 CREATE PROCEDURE inscribir_examen(IN p_id_alumno INT, IN p_id_materia INT)
 BEGIN
     DECLARE estado_materia VARCHAR(50);
+
     SELECT estado INTO estado_materia
     FROM inscripcion_materia
     WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia;
@@ -148,6 +151,7 @@ END //
 CREATE PROCEDURE registrar_nota_examen(IN p_id_alumno INT, IN p_id_materia INT, IN p_nota DECIMAL(5,2))
 BEGIN
     DECLARE inscripcion_existe INT;
+    
     SELECT COUNT(*) INTO inscripcion_existe
     FROM inscripcion_examen
     WHERE id_alumno = p_id_alumno AND id_materia = p_id_materia;
