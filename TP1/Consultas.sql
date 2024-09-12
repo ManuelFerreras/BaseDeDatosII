@@ -4,13 +4,13 @@ JOIN inscripcion_carrera ic ON c.id_carrera = ic.id_carrera
 GROUP BY c.nombre_carrera;
 
 SELECT p.anio_cursada, p.cuatrimestre, c.nombre_carrera, COUNT(ic.id_alumno) AS cantidad_alumnos
-FROM plan_de_materia p
+FROM plan_de_carrera p
 JOIN carrera c ON p.id_carrera = c.id_carrera
 JOIN inscripcion_carrera ic ON c.id_carrera = ic.id_carrera
 GROUP BY p.anio_cursada, p.cuatrimestre, c.nombre_carrera;
 
 SELECT p.anio_cursada, p.cuatrimestre, c.nombre_carrera, COUNT(DISTINCT im.id_alumno) AS cantidad_activos
-FROM plan_de_materia p
+FROM plan_de_carrera p
 JOIN carrera c ON p.id_carrera = c.id_carrera
 JOIN inscripcion_carrera ic ON c.id_carrera = ic.id_carrera
 JOIN inscripcion_materia im ON ic.id_alumno = im.id_alumno

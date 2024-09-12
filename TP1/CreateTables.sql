@@ -31,7 +31,7 @@ CREATE TABLE materia (
     nombre_materia VARCHAR(100)
 );
 
-CREATE TABLE plan_de_materia (
+CREATE TABLE plan_de_carrera (
     id_plan INT PRIMARY KEY,
     cuatrimestre INT,
     anio_cursada INT,

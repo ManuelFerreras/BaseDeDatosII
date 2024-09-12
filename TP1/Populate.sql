@@ -14,7 +14,7 @@ VALUES
 (2, 'Ingeniería en Computación', 'Ingeniero en Computación'),
 (3, 'Licenciatura en Bioinformática', 'Licenciado en Bioinformática');
 
-INSERT INTO plan_de_materia (id_plan, cuatrimestre, anio_cursada, id_carrera)
+INSERT INTO plan_de_carrera (id_plan, cuatrimestre, anio_cursada, id_carrera)
 VALUES 
 (1, 1, 2016, 1), 
 (2, 2, 2020, 2), 
