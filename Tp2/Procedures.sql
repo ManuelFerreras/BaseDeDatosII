@@ -1,4 +1,5 @@
 -- Eliminar procedimientos existentes
+DROP PROCEDURE IF EXISTS verificar_existencia_alumno;
 DROP PROCEDURE IF EXISTS verificar_existencia_carrera;
 DROP PROCEDURE IF EXISTS verificar_existencia_plan;
 DROP PROCEDURE IF EXISTS verificar_existencia_plan_para_materia;
@@ -10,6 +11,21 @@ DROP PROCEDURE IF EXISTS inscribir_examen;
 DROP PROCEDURE IF EXISTS registrar_nota_examen;
 
 DELIMITER //
+
+
+-- Verificar la existencia de un alumno
+
+CREATE PROCEDURE verificar_existencia_alumno(IN p_id_alumno INT)
+BEGIN
+    DECLARE alumno_existe INT;
+    SELECT COUNT(*) INTO alumno_existe
+    FROM alumno
+    WHERE id_alumno = p_id_alumno;
+
+    IF alumno_existe = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El alumno no existe';
+    END IF;
+END //
 
 -- Verificar la existencia de una carrera
 CREATE PROCEDURE verificar_existencia_carrera(IN p_id_carrera INT)
@@ -172,5 +188,7 @@ BEGIN
         END IF;
     END IF;
 END //
+
+
 
 DELIMITER ;

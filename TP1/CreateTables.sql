@@ -18,7 +18,7 @@ CREATE TABLE carrera (
 );
 
 CREATE TABLE inscripcion_carrera (
-    id_insc_carrera INT PRIMARY KEY,
+    id_insc_carrera INT AUTO_INCREMENT PRIMARY KEY,
     fecha_matriculacion DATE,
     id_alumno INT,
     id_carrera INT,
@@ -68,7 +68,7 @@ CREATE TABLE profesor (
 );
 
 CREATE TABLE inscripcion_materia (
-    id_insc_materia INT PRIMARY KEY,
+    id_insc_materia INT AUTO_INCREMENT PRIMARY KEY,
     fecha_inscripcion DATE,
     estado VARCHAR(50),
     fecha_estado DATE,
