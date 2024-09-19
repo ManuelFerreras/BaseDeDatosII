@@ -5,14 +5,14 @@ CREATE DATABASE acad;
 USE acad;
 
 CREATE TABLE alumno (
-    id_alumno INT PRIMARY KEY,
+    id_alumno INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100),
     apellido VARCHAR(100),
     fecha_nacimiento DATE
 );
 
 CREATE TABLE carrera (
-    id_carrera INT PRIMARY KEY,
+    id_carrera INT AUTO_INCREMENT PRIMARY KEY,
     nombre_carrera VARCHAR(100),
     titulo VARCHAR(100)
 );
@@ -27,12 +27,12 @@ CREATE TABLE inscripcion_carrera (
 );
 
 CREATE TABLE materia (
-    id_materia INT PRIMARY KEY,
+    id_materia INT AUTO_INCREMENT PRIMARY KEY,
     nombre_materia VARCHAR(100)
 );
 
 CREATE TABLE plan_de_carrera (
-    id_plan INT PRIMARY KEY,
+    id_plan INT AUTO_INCREMENT PRIMARY KEY,
     cuatrimestre INT,
     anio_cursada INT,
     id_carrera INT,
@@ -40,7 +40,7 @@ CREATE TABLE plan_de_carrera (
 );
 
 CREATE TABLE materiaXplan (
-    id_materiaXplan INT PRIMARY KEY,
+    id_materiaXplan INT AUTO_INCREMENT PRIMARY KEY,
     id_plan INT,
     id_materia INT,
     FOREIGN KEY (id_plan) REFERENCES plan_de_carrera(id_plan),
@@ -48,12 +48,12 @@ CREATE TABLE materiaXplan (
 );
 
 CREATE TABLE comision (
-    id_comision INT PRIMARY KEY,
+    id_comision INT AUTO_INCREMENT PRIMARY KEY,
     nombre_comision VARCHAR(100)
 );
 
 CREATE TABLE materiaXplanXcomision (
-    id_materiaXplanXcomision INT PRIMARY KEY,
+    id_materiaXplanXcomision INT AUTO_INCREMENT PRIMARY KEY,
     id_materiaXplan INT,
     id_comision INT,
     FOREIGN KEY (id_materiaXplan) REFERENCES materiaXplan(id_materiaXplan),
@@ -61,7 +61,7 @@ CREATE TABLE materiaXplanXcomision (
 );
 
 CREATE TABLE profesor (
-    id_profesor INT PRIMARY KEY,
+    id_profesor INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100),
     apellido VARCHAR(100),
     fecha_nacimiento DATE
@@ -79,7 +79,7 @@ CREATE TABLE inscripcion_materia (
 );
 
 CREATE TABLE parcial (
-    id_parcial INT PRIMARY KEY,
+    id_parcial INT AUTO_INCREMENT PRIMARY KEY,
     parcial VARCHAR(50),
     fecha DATE,
     nota DECIMAL(5, 2),
@@ -88,13 +88,13 @@ CREATE TABLE parcial (
 );
 
 CREATE TABLE inscripcion_examen (
-    id_inscripcion_examen INT PRIMARY KEY,
+    id_inscripcion_examen INT AUTO_INCREMENT PRIMARY KEY,
     fecha_inscripcion DATE,
     fecha_examen DATE,
     nota DECIMAL(5, 2)
 );
 
 CREATE TABLE turno_examen (
-    id_turno_examen INT PRIMARY KEY,
+    id_turno_examen INT AUTO_INCREMENT PRIMARY KEY,
     fecha_turno DATE
 );
