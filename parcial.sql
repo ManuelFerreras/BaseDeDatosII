@@ -1,4 +1,5 @@
 -- Base de Datos ventas
+DROP DATABASE ventas;
 create database ventas;
 
 use ventas;
@@ -28,6 +29,14 @@ CREATE TABLE log (
     fecha DATETIME
 );
 
+delimiter //
+CREATE PROCEDURE updCancelaOrden (in _ordenID INT )
+BEGIN
+	-- Agregar código para este procedimiento
+
+END //
+
+delimiter ;
 
 DELIMITER //
 
@@ -50,7 +59,7 @@ END //
 DELIMITER ;
 
 -- Procedimientos Almacenados y Funciones
-delimiter //
+DELIMITER //
 
 CREATE PROCEDURE insCliente  (IN nom VARCHAR(50))
 
@@ -68,10 +77,10 @@ BEGIN
 
 END //
 
-delimiter ;
+DELIMITER ;
 
 
-delimiter //
+DELIMITER //
 
 CREATE PROCEDURE insNuevaOrden (in _clienteID INT, _cantidad INT, in _ordenFecha DATETIME, in _estado CHAR (1)/*, out numeroOrden int*/ )
 BEGIN
@@ -88,10 +97,10 @@ BEGIN
 
 END //
 
-delimiter ;
+DELIMITER ;
 
 
-delimiter //
+DELIMITER //
 
 CREATE PROCEDURE updCompletaOrden (in _ordenID INT, in _completadoFecha DATE)
 BEGIN
@@ -108,7 +117,7 @@ BEGIN
         
 END //
 
-delimiter ;
+DELIMITER ;
 
 
 DELIMITER //
@@ -138,7 +147,7 @@ END //
 DELIMITER ;
 
 
-delimiter //
+DELIMITER //
 
 CREATE PROCEDURE updCliente (in _clienteID INT)
 BEGIN 
@@ -154,7 +163,7 @@ BEGIN
         
 END //
 
-delimiter ;
+DELIMITER ;
 
 -- Test 1
 delimiter //
